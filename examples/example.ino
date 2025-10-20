@@ -1,27 +1,22 @@
 #include <MQGasKit.h>
 
-// Example: Using MQ-2 sensor on A0
-MQGasKit mq2(A0, MQ2);
+MQGasKit sensor(A0, MQ2);  // Single sensor on A0
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Calibrating MQ-2 in clean air...");
-  mq2.calibrate();
-  Serial.println("Calibration complete!");
+  Serial.begin(115200);
+  sensor.calibrate();       // Calibrate in clean air
 }
 
 void loop() {
-  float co   = mq2.getPPM("CO");
-  float lpg  = mq2.getPPM("LPG");
-  float smoke = mq2.getPPM("Smoke");
+  // Automatically detect the gas affecting the sensor
+  String gas = sensor.detectGas();
+  Serial.print("Likely gas: ");
+  Serial.println(gas);
 
-  Serial.print("CO: ");
-  Serial.print(co);
-  Serial.print(" ppm | LPG: ");
-  Serial.print(lpg);
-  Serial.print(" ppm | Smoke: ");
-  Serial.print(smoke);
-  Serial.println(" ppm");
+  // Optionally, get PPM for a specific gas
+  float ppm = sensor.getPPM("LPG");
+  Serial.print("LPG concentration: ");
+  Serial.println(ppm);
 
-  delay(1000);
+  delay(2000);
 }
